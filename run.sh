@@ -187,8 +187,8 @@ if ! docker images | grep -q "${DOCKER_IMAGE}" \
     build_image "Dockerfile_${UBUNTU_VERSION}"
 fi
 
-uid=$(id -u ${USER})
-gid=$(id -g ${USER})
+uid=1001
+gid=1001
 
 # .gitconfig is required by repo and git
 if [ ! -f ${HOME}/.gitconfig ]; then
@@ -199,13 +199,14 @@ if [ ! -f ${HOME}/.gitconfig ]; then
 fi
 
 set_quirks
-
 docker run -e HOST_USER_ID=$uid -e HOST_USER_GID=$gid \
     -v ~/.ssh:/home/vari/.ssh \
+    -v /opt:/opt \
     -v ${WORKDIR}:/workdir \
     -v ~/.gitconfig:/tmp/host_gitconfig \
     -v /usr/src:/usr/src \
     -v /lib/modules:/lib/modules \
+    -v ~/bin:/home/vari/bin \
     ${DOCKER_VOLUMES} \
     ${INTERACTIVE} \
     ${ENV_FILE} \
